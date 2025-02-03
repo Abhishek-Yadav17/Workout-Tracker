@@ -1,20 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { WorkoutComponent } from './workout.component';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { WorkoutService } from '../workout.service';
+
+class MockWorkoutService {
+  getUsers() {
+    return [
+      { name: 'John', workouts: [{ type: 'Running', minutes: 30 }] },
+      { name: 'Alice', workouts: [{ type: 'Yoga', minutes: 30 }] },
+    ];
+  }
+
+  addUser(name: string, workoutType: string, workoutMinutes: number) {}
+
+  addWorkout(userName: string, type: string, minutes: number) {}
+
+  removeUser(userName: string) {}
+}
 
 describe('WorkoutComponent', () => {
   let component: WorkoutComponent;
   let fixture: ComponentFixture<WorkoutComponent>;
+  let workoutService: WorkoutService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [WorkoutComponent],
       imports: [FormsModule, CommonModule],
+      providers: [{ provide: WorkoutService, useClass: MockWorkoutService }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(WorkoutComponent);
     component = fixture.componentInstance;
+    workoutService = TestBed.inject(WorkoutService);
     fixture.detectChanges();
   });
 
@@ -41,7 +60,7 @@ describe('WorkoutComponent', () => {
     const user = component.users[0];
     const initialName = user.name;
     component.editUserName(user);
-    
+
     const newName = 'John Doe Updated';
     user.name = newName;
     expect(user.name).toBe(newName);
@@ -50,7 +69,7 @@ describe('WorkoutComponent', () => {
   it('should calculate total workout minutes correctly', () => {
     const user = component.users[0];
     const totalMinutes = component.getTotalWorkoutMinutes(user.workouts);
-    expect(totalMinutes).toBe(75); 
+    expect(totalMinutes).toBe(30);
   });
 
   it('should remove a user', () => {
@@ -82,9 +101,9 @@ describe('WorkoutComponent', () => {
 
   it('should add a workout to a user', () => {
     const user = component.users[0];
-    const initialWorkoutCount = user.workouts.length;
+    const initialWorkoutCount = user.workouts ? user.workouts.length : 0;
     component.addWorkout(user.name, 'Cycling', 30);
-    
+
     expect(user.workouts.length).toBe(initialWorkoutCount + 1);
     expect(user.workouts[user.workouts.length - 1].type).toBe('Cycling');
     expect(user.workouts[user.workouts.length - 1].minutes).toBe(30);

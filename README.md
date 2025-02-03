@@ -1,3 +1,14 @@
+## Code Coverage
+
+![Code Coverage](assets/CodeCoverage.png)
+
+### Code Coverage Summary:
+
+- **Statements**: 47.56%%
+- **Branches**: 25.92%
+- **Functions**: 46.15%
+- **Lines**: 44%
+
 # WorkoutTrackerApp
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
