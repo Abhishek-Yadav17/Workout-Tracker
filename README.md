@@ -1,7 +1,3 @@
-## Code Coverage
-
-![Code Coverage](public/assets/CodeCoverage.pngassets)
-
 ### Code Coverage Summary:
 
 - **Statements**: 47.56%%
