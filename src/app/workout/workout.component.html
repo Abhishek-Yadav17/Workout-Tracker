@@ -1,0 +1,194 @@
+<div class="container mx-auto p-6 bg-[#F2EFFF] min-h-screen">
+
+    <div class="bg-white p-6 rounded-lg mb-6 border-gray-200" style="border-radius: 20px; box-shadow: 1px 1px 3px -3px rgba(0,0,0,0.75);">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-800">Add New User</h3>
+        <button 
+          (click)="toggleAddUserForm()"
+          class="px-5 py-3 bg-[#0E0D23] text-white rounded-full shadow-md hover:bg-[#1b1a36] transition duration-300"
+        >
+          Add User
+        </button>
+      </div>
+  
+      <div *ngIf="showAddUserForm" class="space-y-4">
+        <div>
+          <input 
+            [(ngModel)]="newUserName" 
+            type="text" 
+            placeholder="User Name" 
+            class="w-full p-3 rounded-md shadow-sm text-sm"
+            style="box-shadow: 0px 0px 2px -1px rgba(0,0,0,0.75);"
+          />
+        </div>
+  
+        <div>
+          <select 
+            [(ngModel)]="newWorkoutType" 
+            class="w-full p-3 rounded-md shadow-sm text-sm"
+            style="box-shadow: 0px 0px 2px -1px rgba(0,0,0,0.75);"
+          >
+            <option value="">Select Workout Type</option>
+            <option value="Running">Running</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Swimming">Swimming</option>
+            <option value="Yoga">Yoga</option>
+          </select>
+        </div>
+  
+        <div>
+          <input 
+            [(ngModel)]="newWorkoutMinutes" 
+            type="number" 
+            placeholder="Workout Minutes" 
+            class="w-full p-3 rounded-md shadow-md text-sm"
+            style="box-shadow: 0px 0px 2px -1px rgba(0,0,0,0.75);"
+          />
+        </div>
+  
+        <div>
+          <button 
+            (click)="addUser()" 
+            class="w-full p-3 bg-[#0E0D23] text-white rounded-full shadow-md hover:bg-[#1b1a36] transition duration-300"
+          >
+            Add User
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <div class="flex flex-col md:flex-row justify-between mb-6">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        placeholder="Search by name" 
+        class="w-full md:w-1/4 p-3 py-5 mb-4 md:mb-0 border border-gray-300 rounded-md shadow-sm"
+        style="border-radius: 20px;"
+      />
+    
+      <select 
+        [(ngModel)]="workoutFilter" 
+        class="w-full md:w-1/4 p-3 py-5 mb-4 md:mb-0 border border-gray-300 rounded-md shadow-sm"
+        style="border-radius: 20px;"
+      >
+        <option value="">All Workout Types</option>
+        <option value="Running">Running</option>
+        <option value="Cycling">Cycling</option>
+        <option value="Swimming">Swimming</option>
+        <option value="Yoga">Yoga</option>
+      </select>
+    </div>
+  
+    <div *ngFor="let user of filteredUsers" class="bg-white p-6 rounded-lg mb-6" style="border-radius: 20px; box-shadow: 1px 1px 3px -3px rgba(0,0,0,0.75);">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">
+          {{ user.name }}
+        </h2>
+        <div class="flex space-x-4">
+          <button 
+            (click)="editUserName(user)" 
+            class="bg-[#D1E9FE] text-[#2683FF] px-2 py-1.5 rounded-md hover:bg-[#b1ccfa] transition duration-300 text-sm font-bold"
+          >
+            Edit Name
+          </button>
+          <button 
+            (click)="removeUser(user)" 
+            class="bg-[#F7DDD8] text-[#B71D18] px-2 py-1.5 rounded-md hover:bg-[#F5C0B6] transition duration-300 text-sm font-bold"
+          >
+            Delete User
+          </button>
+        </div>
+      </div>
+      <p class="text-sm text-gray-600 mb-4">
+        Total workout time: {{ getTotalWorkoutMinutes(user.workouts) }} minutes
+      </p>
+  
+      <button 
+        (click)="openAddWorkoutModal(user)" 
+        class="bg-[#D3EFDF] text-[#118D57] px-2 py-1.5 rounded-md hover:bg-[#b1ccfa] transition duration-300 text-sm font-bold"
+      >
+        Add Workout
+      </button>
+  
+      <div *ngFor="let workout of user.workouts" class="border-t border-gray-200 pt-4 mt-4">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-gray-800">{{ workout.type }}</span>
+          <span class="text-sm text-gray-600">{{ workout.minutes }} minutes</span>
+          <div class="flex space-x-2">
+            <button 
+              (click)="editWorkout(user, workout)" 
+              class="bg-[#D1E9FE] text-[#2683FF] px-2 py-1.5 rounded-md hover:bg-[#b1ccfa] transition duration-300 text-sm font-bold"
+            >
+              Edit
+            </button>
+            <button 
+              (click)="removeWorkout(user, workout)" 
+              class="bg-[#F7DDD8] text-[#B71D18] px-2 py-1.5 rounded-md hover:bg-[#F5C0B6] transition duration-300 text-sm font-bold"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-center mt-6">
+      <button 
+        *ngFor="let page of [].constructor(totalPages); let i = index" 
+        (click)="setPage(i + 1)" 
+        [class.bg-blue-500]="i + 1 === currentPage"
+        [class.text-white]="i + 1 === currentPage"
+        [class.text-blue-500]="i + 1 !== currentPage"
+        [class.bg-white]="i + 1 !== currentPage"
+        class="px-4 py-2 mx-1 border rounded-lg transition duration-200 hover:bg-blue-100"
+      >
+        {{ i + 1 }}
+      </button>
+    </div>
+  
+    <div *ngIf="showAddWorkoutModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Add Workout to {{ selectedUser?.name }}</h3>
+        <div class="space-y-4">
+          <div>
+            <select 
+              [(ngModel)]="newWorkoutType" 
+              class="w-full p-3 rounded-md shadow-sm text-sm"
+            >
+              <option value="">Select Workout Type</option>
+              <option *ngFor="let type of workoutTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+  
+          <div>
+            <input 
+              [(ngModel)]="newWorkoutMinutes" 
+              type="number" 
+              placeholder="Workout Minutes" 
+              class="w-full p-3 rounded-md shadow-md text-sm"
+            />
+          </div>
+  
+          <div>
+            <button 
+              (click)="saveWorkout()" 
+              class="w-full p-3 bg-[#D1E9FE] text-[#1D7AF2] rounded-md shadow-md hover:bg-[#b1ccfa] transition duration-300"
+            >
+              Save Workout
+            </button>
+          </div>
+  
+          <div>
+            <button 
+              (click)="closeAddWorkoutModal()" 
+              class="w-full p-3 bg-[#F7DDD8] text-[#B71D18] rounded-md shadow-md hover:bg-[#F5C0B6] transition duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  
