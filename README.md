@@ -1,6 +1,6 @@
 ## Code Coverage
 
-![Code Coverage](assets/CodeCoverage.png)
+![Code Coverage](public/assets/CodeCoverage.pngassets)
 
 ### Code Coverage Summary:
 
